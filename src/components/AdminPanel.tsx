@@ -26,7 +26,7 @@ import {
 import { createNewApp, updateExistingApp, deleteAppById, isFirebaseActive, getDbModeLabel } from '../lib/firebase';
 import { CATEGORIES } from '../data';
 
-const compressAndConvertImage = (file: File, maxWidth: number, maxHeight: number, quality: number = 0.75): Promise<string> => {
+const compressAndConvertImage = (file: File, maxDimension: number = 1024, quality: number = 0.75): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -38,15 +38,13 @@ const compressAndConvertImage = (file: File, maxWidth: number, maxHeight: number
         let width = img.width;
         let height = img.height;
 
-        if (width > height) {
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
           }
         }
 
@@ -73,10 +71,10 @@ interface ImageUploaderProps {
   label: string;
   value: string;
   onChange: (val: string) => void;
-  aspectRatio: 'square' | 'landscape';
+  maxDimension?: number;
 }
 
-function ImageUploader({ label, value, onChange, aspectRatio }: ImageUploaderProps) {
+function ImageUploader({ label, value, onChange, maxDimension = 1024 }: ImageUploaderProps) {
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -98,9 +96,7 @@ function ImageUploader({ label, value, onChange, aspectRatio }: ImageUploaderPro
     }
     setLoading(true);
     try {
-      const maxWidth = aspectRatio === 'square' ? 256 : 1024;
-      const maxHeight = aspectRatio === 'square' ? 256 : 576;
-      const compressed = await compressAndConvertImage(file, maxWidth, maxHeight, 0.75);
+      const compressed = await compressAndConvertImage(file, maxDimension, 0.75);
       onChange(compressed);
     } catch (err) {
       console.error(err);
@@ -169,13 +165,11 @@ function ImageUploader({ label, value, onChange, aspectRatio }: ImageUploaderPro
           </div>
         ) : value ? (
           <div className="flex items-center gap-3 w-full">
-            <div className={`relative bg-white border border-gray-100 shadow-sm overflow-hidden shrink-0 ${
-              aspectRatio === 'square' ? 'w-16 h-16 rounded-xl' : 'w-24 h-14 rounded-lg'
-            }`}>
+            <div className="relative bg-white border border-gray-100 shadow-sm overflow-hidden shrink-0 w-16 h-16 rounded-xl flex items-center justify-center p-0.5">
               <img
                 src={value}
                 alt="Uploaded preview"
-                className="w-full h-full object-cover"
+                className="max-w-full max-h-full object-contain"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -604,10 +598,9 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
 
                 {/* Icon URL */}
                 <ImageUploader
-                  label="Icon URL (Square Image)"
+                  label="Icon URL"
                   value={iconUrl}
                   onChange={setIconUrl}
-                  aspectRatio="square"
                 />
 
                 {/* Download URL */}
@@ -699,25 +692,22 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
 
               {/* Screenshot URLs */}
               <div className="space-y-3">
-                <label className="text-xs font-semibold text-gray-600 block">Screenshots Showcase (Landscape URLs recommended)</label>
+                <label className="text-xs font-semibold text-gray-600 block">Screenshots Showcase</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <ImageUploader
                     label="Screenshot 1"
                     value={screenshot1}
                     onChange={setScreenshot1}
-                    aspectRatio="landscape"
                   />
                   <ImageUploader
                     label="Screenshot 2"
                     value={screenshot2}
                     onChange={setScreenshot2}
-                    aspectRatio="landscape"
                   />
                   <ImageUploader
                     label="Screenshot 3"
                     value={screenshot3}
                     onChange={setScreenshot3}
-                    aspectRatio="landscape"
                   />
                 </div>
               </div>
