@@ -25,6 +25,192 @@ import {
 } from 'lucide-react';
 import { createNewApp, updateExistingApp, deleteAppById, isFirebaseActive, getDbModeLabel } from '../lib/firebase';
 
+const compressAndConvertImage = (file: File, maxWidth: number, maxHeight: number, quality: number = 0.75): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(event.target?.result as string);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => {
+        reject(new Error('Failed to load image'));
+      };
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
+interface ImageUploaderProps {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  aspectRatio: 'square' | 'landscape';
+}
+
+function ImageUploader({ label, value, onChange, aspectRatio }: ImageUploaderProps) {
+  const [dragActive, setDragActive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const processFile = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const maxWidth = aspectRatio === 'square' ? 256 : 1024;
+      const maxHeight = aspectRatio === 'square' ? 256 : 576;
+      const compressed = await compressAndConvertImage(file, maxWidth, maxHeight, 0.75);
+      onChange(compressed);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to compress and upload image.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      await processFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      await processFile(e.target.files[0]);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-1.5 w-full">
+      <label className="text-xs font-semibold text-gray-600 flex justify-between items-center">
+        <span>{label}</span>
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="text-[10px] text-red-500 hover:text-red-700 font-medium transition-colors"
+          >
+            Clear
+          </button>
+        )}
+      </label>
+
+      <div
+        onDragEnter={handleDrag}
+        onDragOver={handleDrag}
+        onDragLeave={handleDrag}
+        onDrop={handleDrop}
+        onClick={() => fileInputRef.current?.click()}
+        className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all min-h-[110px] relative overflow-hidden ${
+          dragActive
+            ? 'border-[#01875f] bg-emerald-50/50'
+            : value
+            ? 'border-gray-200 bg-gray-50/20 hover:bg-gray-50/40'
+            : 'border-gray-200 bg-gray-50 hover:bg-gray-100/50'
+        }`}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
+        {loading ? (
+          <div className="flex flex-col items-center gap-1">
+            <RefreshCw className="w-5 h-5 text-[#01875f] animate-spin" />
+            <span className="text-[10px] text-gray-500 font-medium">Processing...</span>
+          </div>
+        ) : value ? (
+          <div className="flex items-center gap-3 w-full">
+            <div className={`relative bg-white border border-gray-100 shadow-sm overflow-hidden shrink-0 ${
+              aspectRatio === 'square' ? 'w-16 h-16 rounded-xl' : 'w-24 h-14 rounded-lg'
+            }`}>
+              <img
+                src={value}
+                alt="Uploaded preview"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full inline-block mb-1">
+                Image Uploaded
+              </span>
+              <p className="text-[10px] text-gray-400 truncate max-w-full">
+                {value.startsWith('data:') ? 'Base64 Encoded Image' : value}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center text-center">
+            <Upload className="w-5 h-5 text-gray-400 mb-1" />
+            <p className="text-[11px] text-gray-600 font-medium">
+              Drag & drop or <span className="text-[#01875f] underline">browse</span>
+            </p>
+            <p className="text-[9px] text-gray-400 mt-0.5">
+              Supports PNG, JPG (Auto-compressed)
+            </p>
+          </div>
+        )}
+      </div>
+      
+      <input
+        type="text"
+        value={value.startsWith('data:') ? '' : value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Or paste direct image URL here..."
+        className="bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#01875f] text-[10px] text-gray-500 rounded-lg p-2 outline-none transition-colors"
+      />
+    </div>
+  );
+}
+
 interface AdminPanelProps {
   apps: AppItem[];
   onRefreshApps: () => Promise<void>;
@@ -419,16 +605,12 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
                 </div>
 
                 {/* Icon URL */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-gray-600">Icon URL (Square Image)</label>
-                  <input
-                    type="url"
-                    value={iconUrl}
-                    onChange={(e) => setIconUrl(e.target.value)}
-                    placeholder="e.g. https://images.unsplash.com/photo-..."
-                    className="bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#01875f] text-gray-900 text-xs rounded-xl p-3 outline-none transition-colors"
-                  />
-                </div>
+                <ImageUploader
+                  label="Icon URL (Square Image)"
+                  value={iconUrl}
+                  onChange={setIconUrl}
+                  aspectRatio="square"
+                />
 
                 {/* Download URL */}
                 <div className="flex flex-col gap-1.5">
@@ -521,26 +703,23 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
               <div className="space-y-3">
                 <label className="text-xs font-semibold text-gray-600 block">Screenshots Showcase (Landscape URLs recommended)</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <input
-                    type="url"
+                  <ImageUploader
+                    label="Screenshot 1"
                     value={screenshot1}
-                    onChange={(e) => setScreenshot1(e.target.value)}
-                    placeholder="Screenshot URL 1"
-                    className="bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#01875f] text-gray-900 text-xs rounded-xl p-2.5 outline-none transition-colors"
+                    onChange={setScreenshot1}
+                    aspectRatio="landscape"
                   />
-                  <input
-                    type="url"
+                  <ImageUploader
+                    label="Screenshot 2"
                     value={screenshot2}
-                    onChange={(e) => setScreenshot2(e.target.value)}
-                    placeholder="Screenshot URL 2"
-                    className="bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#01875f] text-gray-900 text-xs rounded-xl p-2.5 outline-none transition-colors"
+                    onChange={setScreenshot2}
+                    aspectRatio="landscape"
                   />
-                  <input
-                    type="url"
+                  <ImageUploader
+                    label="Screenshot 3"
                     value={screenshot3}
-                    onChange={(e) => setScreenshot3(e.target.value)}
-                    placeholder="Screenshot URL 3"
-                    className="bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#01875f] text-gray-900 text-xs rounded-xl p-2.5 outline-none transition-colors"
+                    onChange={setScreenshot3}
+                    aspectRatio="landscape"
                   />
                 </div>
               </div>
