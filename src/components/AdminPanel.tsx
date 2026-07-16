@@ -614,7 +614,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
 
                 {/* Download URL */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-gray-600">APK Download URL (or # for demo simulation)</label>
+                  <label className="text-xs font-semibold text-gray-600">APK Download URL (or # for demo simulation) - Optional</label>
                   <input
                     type="text"
                     value={downloadUrl}
