@@ -1,0 +1,177 @@
+{
+  "entities": {
+    "Review": {
+      "title": "Review",
+      "description": "User review of an applet in the appstore",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the review"
+        },
+        "authorName": {
+          "type": "string",
+          "description": "Name of the reviewer",
+          "maxLength": 100
+        },
+        "authorAvatar": {
+          "type": "string",
+          "description": "Avatar URL of the reviewer"
+        },
+        "rating": {
+          "type": "number",
+          "description": "Rating score out of 5"
+        },
+        "comment": {
+          "type": "string",
+          "description": "Written commentary feedback",
+          "maxLength": 1000
+        },
+        "date": {
+          "type": "string",
+          "description": "ISO formatted date string"
+        }
+      },
+      "required": ["id", "authorName", "rating", "comment", "date"]
+    },
+    "AppItem": {
+      "title": "AppItem",
+      "description": "An application listed in the Myselfmk Appstore",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier matching the URL-safe slug of the app name"
+        },
+        "name": {
+          "type": "string",
+          "description": "Title of the application",
+          "maxLength": 150
+        },
+        "packageName": {
+          "type": "string",
+          "description": "Android package name identifier (e.g., com.example.app)",
+          "pattern": "^[a-z][a-z0-9_]*(\\.[a-z0-9_]+)+$"
+        },
+        "category": {
+          "type": "string",
+          "description": "Functional category of the app"
+        },
+        "iconUrl": {
+          "type": "string",
+          "description": "URL to the app icon image asset"
+        },
+        "shortDescription": {
+          "type": "string",
+          "description": "One-line summary descriptive tagline",
+          "maxLength": 200
+        },
+        "description": {
+          "type": "string",
+          "description": "Full promotional or user manual description",
+          "maxLength": 5000
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic versioning string of the latest build"
+        },
+        "developer": {
+          "type": "string",
+          "description": "Developer or studio publishing credit"
+        },
+        "size": {
+          "type": "string",
+          "description": "Package size with unit (e.g., 14.5 MB)"
+        },
+        "downloads": {
+          "type": "number",
+          "description": "Running counter of mock/live downloads"
+        },
+        "downloadUrl": {
+          "type": "string",
+          "description": "Direct download link to the published APK asset"
+        },
+        "githubUrl": {
+          "type": "string",
+          "description": "GitHub repository URL if open-sourced"
+        },
+        "screenshots": {
+          "type": "array",
+          "description": "Array of promotional screenshot URLs"
+        },
+        "rating": {
+          "type": "number",
+          "description": "Average rating value"
+        },
+        "releaseDate": {
+          "type": "string",
+          "description": "Original release date formatted YYYY-MM-DD"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "Latest update timestamp formatted YYYY-MM-DD"
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Flag to display this app in the carousel hero section"
+        },
+        "isTrending": {
+          "type": "boolean",
+          "description": "Flag to display this app in the trending list section"
+        },
+        "whatsNew": {
+          "type": "string",
+          "description": "Markdown formatted changelog or version notes"
+        },
+        "reviews": {
+          "type": "array",
+          "description": "List of user-submitted reviews"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "packageName",
+        "category",
+        "iconUrl",
+        "shortDescription",
+        "description",
+        "version",
+        "developer",
+        "size",
+        "downloads",
+        "downloadUrl",
+        "screenshots",
+        "rating",
+        "releaseDate",
+        "lastUpdated",
+        "isFeatured",
+        "isTrending",
+        "whatsNew",
+        "reviews"
+      ]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "A verified admin account uid reference",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Verified email address of the administrator"
+        }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "/apps/{appId}": {
+      "schema": "AppItem",
+      "description": "Available applications listed in the Appstore marketplace"
+    },
+    "/admins/{adminUid}": {
+      "schema": "Admin",
+      "description": "Allowlisted administrators with permissions to manage listed apps"
+    }
+  }
+}

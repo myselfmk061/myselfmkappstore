@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Pillar 1)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- REUSABLE GLOBAL HELPERS (Pillars 3 & 10) ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'admin@myselfmk.com' ||
+        request.auth.token.email == 'myselfmk061@gmail.com'
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- ENTITY-SPECIFIC SCHEMAS (Pillar 2) ---
+    function isValidReview(rev) {
+      return rev is map && 
+        rev.id is string && rev.id.size() <= 64 &&
+        rev.authorName is string && rev.authorName.size() <= 100 &&
+        rev.comment is string && rev.comment.size() <= 1000 &&
+        rev.rating is number && rev.rating >= 1.0 && rev.rating <= 5.0 &&
+        rev.date is string && rev.date.size() <= 30;
+    }
+
+    function isValidApp(data) {
+      return data is map &&
+        data.id is string && data.id.size() <= 128 &&
+        data.name is string && data.name.size() <= 150 &&
+        data.packageName is string && data.packageName.size() <= 150 &&
+        data.category is string && data.category.size() <= 50 &&
+        data.iconUrl is string && data.iconUrl.size() <= 1000 &&
+        data.shortDescription is string && data.shortDescription.size() <= 200 &&
+        data.description is string && data.description.size() <= 5000 &&
+        data.version is string && data.version.size() <= 30 &&
+        data.developer is string && data.developer.size() <= 100 &&
+        data.size is string && data.size.size() <= 20 &&
+        data.downloads is number &&
+        data.downloadUrl is string && data.downloadUrl.size() <= 1000 &&
+        data.screenshots is list && data.screenshots.size() <= 10 &&
+        data.rating is number && data.rating >= 1.0 && data.rating <= 5.0 &&
+        data.releaseDate is string && data.releaseDate.size() <= 30 &&
+        data.lastUpdated is string && data.lastUpdated.size() <= 30 &&
+        data.isFeatured is bool &&
+        data.isTrending is bool &&
+        data.whatsNew is string && data.whatsNew.size() <= 2000 &&
+        data.reviews is list && data.reviews.size() <= 200;
+    }
+
+    // --- RULES FOR COLLECTIONS ---
+
+    // 1. Admins Collection
+    match /admins/{adminUid} {
+      allow read: if isSignedIn() && request.auth.uid == adminUid;
+      allow write: if false; // Only manageable through GCP console / secure shell (Pillar 6)
+    }
+
+    // 2. Apps Collection
+    match /apps/{appId} {
+      // Anyone can read catalog (Pillars 1, 8)
+      allow get, list: if true;
+
+      // Full control restricted to Verified Administrators (Pillar 4)
+      allow create: if isAdmin() && isValidId(appId) && isValidApp(incoming()) && incoming().id == appId;
+      allow delete: if isAdmin();
+
+      // Divided Update permissions (Pillar 4 & 5)
+      allow update: if (
+        // Action A: Administrator updating full catalog listing
+        (isAdmin() && isValidApp(incoming()) && incoming().id == existing().id && incoming().releaseDate == existing().releaseDate) ||
+
+        // Action B: Public user appending a single application review (No Auth Required)
+        (
+          incoming().diff(existing()).affectedKeys().hasOnly(['reviews', 'rating']) &&
+          incoming().rating is number && incoming().rating >= 1.0 && incoming().rating <= 5.0 &&
+          incoming().reviews is list && incoming().reviews.size() == existing().reviews.size() + 1 &&
+          incoming().reviews.hasAll(existing().reviews) &&
+          isValidReview(incoming().reviews[0])
+        )
+      );
+    }
+  }
+}

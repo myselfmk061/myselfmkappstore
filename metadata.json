@@ -1,0 +1,6 @@
+{
+  "name": "Myselfmk Appstore",
+  "description": "Your personal Android app marketplace to showcase, manage, and distribute all your current and future Android applications.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
