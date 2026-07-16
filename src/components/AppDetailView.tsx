@@ -272,16 +272,16 @@ export default function AppDetailView({ app, onBack, onRefreshApp }: AppDetailVi
           <h2 className="font-sans font-bold text-gray-900 text-lg mb-4">
             Screenshots & Showcase
           </h2>
-          <div className="flex gap-4 overflow-x-auto no-scrollbar pb-3 scroll-smooth">
-            {app.screenshots.map((src, idx) => (
+          <div className="flex gap-4 overflow-x-auto no-scrollbar pb-3 scroll-smooth items-stretch h-[240px] sm:h-[360px]">
+            {app.screenshots.filter(Boolean).map((src, idx) => (
               <div 
                 key={idx} 
-                className="relative rounded-2xl overflow-hidden aspect-video w-[280px] sm:w-[420px] bg-gray-50 shrink-0 border border-gray-100 shadow-sm"
+                className="relative rounded-2xl overflow-hidden bg-gray-50 shrink-0 border border-gray-100 shadow-sm h-full"
               >
                 <img
                   src={src}
                   alt={`${app.name} screenshot ${idx + 1}`}
-                  className="w-full h-full object-cover object-center"
+                  className="h-full w-auto object-contain max-h-full block"
                   referrerPolicy="no-referrer"
                 />
               </div>
