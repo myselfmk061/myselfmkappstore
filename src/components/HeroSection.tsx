@@ -43,7 +43,7 @@ export default function HeroSection({ featuredApps, onSelectApp }: HeroSectionPr
           {/* Subtle gradient to dark overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-900/60 to-neutral-900/20 z-10" />
           <img
-            src={app.screenshots[0] || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1000&auto=format&fit=crop&q=80'}
+            src={(app.screenshots && app.screenshots[0]) || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1000&auto=format&fit=crop&q=80'}
             alt={app.name}
             className="w-full h-full object-cover object-center scale-105 opacity-80"
             referrerPolicy="no-referrer"
