@@ -14,6 +14,14 @@ export const CATEGORIES = [
   'Health & Fitness',
   'Music & Audio',
   'Tools',
-  'Social & Education'
+  'Social & Education',
+  'Business & Finance',
+  'Entertainment',
+  'Photography & Video',
+  'Shopping',
+  'Travel & Local',
+  'Books & Reference',
+  'Lifestyle',
+  'Weather'
 ];
 

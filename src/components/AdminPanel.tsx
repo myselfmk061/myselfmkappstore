@@ -24,6 +24,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { createNewApp, updateExistingApp, deleteAppById, isFirebaseActive, getDbModeLabel } from '../lib/firebase';
+import { CATEGORIES } from '../data';
 
 const compressAndConvertImage = (file: File, maxWidth: number, maxHeight: number, quality: number = 0.75): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -571,12 +572,9 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
                     onChange={(e) => setCategory(e.target.value)}
                     className="bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#01875f] text-gray-900 text-xs rounded-xl p-3 outline-none transition-colors"
                   >
-                    <option value="Productivity">Productivity</option>
-                    <option value="Games">Games</option>
-                    <option value="Health & Fitness">Health & Fitness</option>
-                    <option value="Music & Audio">Music & Audio</option>
-                    <option value="Tools">Tools</option>
-                    <option value="Social & Education">Social & Education</option>
+                    {CATEGORIES.filter(cat => cat !== 'All').map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
                   </select>
                 </div>
 
