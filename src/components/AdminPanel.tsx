@@ -23,7 +23,7 @@ import {
   AlertTriangle,
   RefreshCw
 } from 'lucide-react';
-import { createNewApp, updateExistingApp, deleteAppById, isFirebaseActive, getDbModeLabel, seedDatabase } from '../lib/firebase';
+import { createNewApp, updateExistingApp, deleteAppById, isFirebaseActive, getDbModeLabel } from '../lib/firebase';
 
 interface AdminPanelProps {
   apps: AppItem[];
@@ -65,29 +65,6 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
 
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [seeding, setSeeding] = useState(false);
-  const [seedSuccess, setSeedSuccess] = useState(false);
-
-  const handleSeedDatabase = async () => {
-    if (seeding) return;
-    const confirm = window.confirm(
-      'Are you sure you want to seed the database with the default portfolio apps?\nThis will write standard app documents to your live Firestore database.'
-    );
-    if (!confirm) return;
-
-    setSeeding(true);
-    setErrorMsg('');
-    setSeedSuccess(false);
-    try {
-      await seedDatabase();
-      setSeedSuccess(true);
-      await onRefreshApps();
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Error occurred while seeding database.');
-    } finally {
-      setSeeding(false);
-    }
-  };
 
   // Calculate statistics
   useEffect(() => {
@@ -273,21 +250,9 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
         </div>
 
         {isFirebaseActive() ? (
-          <div className="flex items-center gap-3 flex-wrap">
-            {seedSuccess && (
-              <span className="text-emerald-600 font-semibold text-[11px] animate-fade-in flex items-center gap-1">
-                <Check className="w-3.5 h-3.5" /> Database Seeded Successfully!
-              </span>
-            )}
-            <button
-              onClick={handleSeedDatabase}
-              disabled={seeding}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#01875f] hover:bg-[#00704e] text-white text-[11px] font-semibold rounded-xl transition cursor-pointer disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3 h-3 ${seeding ? 'animate-spin' : ''}`} />
-              {seeding ? 'Seeding Database...' : 'Seed Database with Default Apps'}
-            </button>
-          </div>
+          <p className="text-gray-400 max-w-lg">
+            ✨ <span className="font-medium text-emerald-600">All set:</span> You can now deploy new listings directly to your production Firestore database.
+          </p>
         ) : (
           <p className="text-gray-400 max-w-lg text-right sm:text-left">
             💡 <span className="font-medium text-gray-600">Tip:</span> Save your Firebase credentials inside your <code className="bg-gray-200 px-1 rounded">.env</code> keys to dynamically sync directly to Firestore.
