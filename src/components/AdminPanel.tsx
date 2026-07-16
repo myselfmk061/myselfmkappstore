@@ -270,17 +270,17 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
     setName('');
     setPackageName('');
     setCategory('Productivity');
-    setIconUrl('https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=128&auto=format&fit=crop&q=80');
+    setIconUrl('');
     setShortDescription('');
     setDescription('');
-    setVersion('1.0.0');
-    setDeveloper('Myselfmk Labs');
-    setSize('15.0 MB');
-    setDownloadUrl('#');
+    setVersion('');
+    setDeveloper('');
+    setSize('');
+    setDownloadUrl('');
     setGithubUrl('');
-    setScreenshot1('https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&auto=format&fit=crop&q=80');
-    setScreenshot2('https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80');
-    setScreenshot3('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80');
+    setScreenshot1('');
+    setScreenshot2('');
+    setScreenshot3('');
     setIsFeatured(false);
     setIsTrending(false);
     setWhatsNew('');
@@ -726,6 +726,31 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
 
               {/* Action buttons */}
               <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setName('');
+                    setPackageName('');
+                    setCategory('Productivity');
+                    setIconUrl('');
+                    setShortDescription('');
+                    setDescription('');
+                    setVersion('');
+                    setDeveloper('');
+                    setSize('');
+                    setDownloadUrl('');
+                    setGithubUrl('');
+                    setScreenshot1('');
+                    setScreenshot2('');
+                    setScreenshot3('');
+                    setIsFeatured(false);
+                    setIsTrending(false);
+                    setWhatsNew('');
+                  }}
+                  className="mr-auto text-xs font-semibold text-red-500 hover:text-red-700 hover:bg-red-50 px-4 py-2.5 rounded-full transition-colors cursor-pointer"
+                >
+                  Clear All
+                </button>
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
