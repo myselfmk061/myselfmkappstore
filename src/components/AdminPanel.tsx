@@ -164,7 +164,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
 
     const screenshots = [screenshot1, screenshot2, screenshot3].filter(url => url.trim() !== '');
 
-    const appData = {
+    const appData: any = {
       name,
       packageName,
       category,
@@ -175,7 +175,6 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
       developer,
       size,
       downloadUrl,
-      githubUrl: githubUrl || undefined,
       screenshots,
       isFeatured,
       isTrending,
@@ -183,6 +182,10 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
       releaseDate,
       lastUpdated: new Date().toISOString().split('T')[0],
     };
+
+    if (githubUrl && githubUrl.trim() !== '') {
+      appData.githubUrl = githubUrl.trim();
+    }
 
     try {
       if (editAppId) {
