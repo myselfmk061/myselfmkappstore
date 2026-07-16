@@ -146,7 +146,16 @@ async function withTimeout<T>(promise: Promise<T>, operationName: string): Promi
 // 1. Fetch All Apps
 export const fetchAllApps = async (): Promise<AppItem[]> => {
   if (!isFirebaseActive() || !firestore) {
-    throw new Error('Firebase is not configured. Please supply VITE_FIREBASE_* secrets in the Secrets panel.');
+    const local = localStorage.getItem('marketplace_apps');
+    if (local) {
+      try {
+        return JSON.parse(local);
+      } catch (e) {
+        return SEED_APPS;
+      }
+    }
+    localStorage.setItem('marketplace_apps', JSON.stringify(SEED_APPS));
+    return SEED_APPS;
   }
 
   const path = 'apps';
@@ -188,7 +197,8 @@ export const seedDatabase = async (): Promise<void> => {
 // 2. Fetch Single App by ID
 export const fetchAppById = async (id: string): Promise<AppItem | null> => {
   if (!isFirebaseActive() || !firestore) {
-    return SEED_APPS.find(app => app.id === id) || null;
+    const apps = await fetchAllApps();
+    return apps.find(app => app.id === id) || null;
   }
 
   const path = `apps/${id}`;
@@ -201,16 +211,13 @@ export const fetchAppById = async (id: string): Promise<AppItem | null> => {
     return null;
   } catch (e) {
     console.warn(`Firestore getDoc for ${id} failed or timed out. Falling back to local data.`);
-    return SEED_APPS.find(app => app.id === id) || null;
+    const apps = await fetchAllApps();
+    return apps.find(app => app.id === id) || null;
   }
 };
 
 // 3. Add a New App
 export const createNewApp = async (appData: Omit<AppItem, 'id' | 'reviews' | 'rating' | 'downloads'>): Promise<AppItem> => {
-  if (!isFirebaseActive() || !firestore) {
-    throw new Error('Firebase is not configured.');
-  }
-
   const newId = appData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `app-${Date.now()}`;
   
   const newApp: AppItem = {
@@ -220,6 +227,13 @@ export const createNewApp = async (appData: Omit<AppItem, 'id' | 'reviews' | 'ra
     rating: 5.0,
     reviews: [],
   };
+
+  if (!isFirebaseActive() || !firestore) {
+    const apps = await fetchAllApps();
+    const updatedApps = [newApp, ...apps];
+    localStorage.setItem('marketplace_apps', JSON.stringify(updatedApps));
+    return newApp;
+  }
 
   const path = `apps/${newId}`;
   try {
@@ -237,13 +251,17 @@ export const createNewApp = async (appData: Omit<AppItem, 'id' | 'reviews' | 'ra
 // 4. Update an Existing App
 export const updateExistingApp = async (id: string, updatedFields: Partial<AppItem>): Promise<boolean> => {
   if (!isFirebaseActive() || !firestore) {
-    throw new Error('Firebase is not configured.');
+    const apps = await fetchAllApps();
+    const updatedApps = apps.map(app => app.id === id ? { ...app, ...updatedFields } : app);
+    localStorage.setItem('marketplace_apps', JSON.stringify(updatedApps));
+    return true;
   }
 
   const path = `apps/${id}`;
   try {
     const docRef = doc(firestore, 'apps', id);
-    await withTimeout(updateDoc(docRef, updatedFields), 'updateExistingApp');
+    // Use setDoc with merge: true instead of updateDoc to support both existing and unseeded apps
+    await withTimeout(setDoc(docRef, updatedFields, { merge: true }), 'updateExistingApp');
     return true;
   } catch (e) {
     if (e instanceof Error && e.message.includes('TIMEOUT')) {
@@ -257,7 +275,10 @@ export const updateExistingApp = async (id: string, updatedFields: Partial<AppIt
 // 5. Delete an App
 export const deleteAppById = async (id: string): Promise<boolean> => {
   if (!isFirebaseActive() || !firestore) {
-    throw new Error('Firebase is not configured.');
+    const apps = await fetchAllApps();
+    const updatedApps = apps.filter(app => app.id !== id);
+    localStorage.setItem('marketplace_apps', JSON.stringify(updatedApps));
+    return true;
   }
 
   const path = `apps/${id}`;

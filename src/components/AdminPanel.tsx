@@ -61,6 +61,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
   const [isFeatured, setIsFeatured] = useState(false);
   const [isTrending, setIsTrending] = useState(false);
   const [whatsNew, setWhatsNew] = useState('');
+  const [releaseDate, setReleaseDate] = useState('');
 
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -120,6 +121,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
     setIsFeatured(false);
     setIsTrending(false);
     setWhatsNew('');
+    setReleaseDate(new Date().toISOString().split('T')[0]);
     setErrorMsg('');
     setIsEditing(true);
   };
@@ -144,6 +146,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
     setIsFeatured(app.isFeatured);
     setIsTrending(app.isTrending);
     setWhatsNew(app.whatsNew || '');
+    setReleaseDate(app.releaseDate || new Date().toISOString().split('T')[0]);
     setErrorMsg('');
     setIsEditing(true);
   };
@@ -177,7 +180,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
       isFeatured,
       isTrending,
       whatsNew,
-      releaseDate: new Date().toISOString().split('T')[0],
+      releaseDate,
       lastUpdated: new Date().toISOString().split('T')[0],
     };
 
