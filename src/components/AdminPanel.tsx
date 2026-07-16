@@ -72,9 +72,10 @@ interface ImageUploaderProps {
   value: string;
   onChange: (val: string) => void;
   maxDimension?: number;
+  onRemove?: () => void;
 }
 
-function ImageUploader({ label, value, onChange, maxDimension = 1024 }: ImageUploaderProps) {
+function ImageUploader({ label, value, onChange, maxDimension = 1024, onRemove }: ImageUploaderProps) {
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -125,15 +126,26 @@ function ImageUploader({ label, value, onChange, maxDimension = 1024 }: ImageUpl
     <div className="flex flex-col gap-1.5 w-full">
       <label className="text-xs font-semibold text-gray-600 flex justify-between items-center">
         <span>{label}</span>
-        {value && (
-          <button
-            type="button"
-            onClick={() => onChange('')}
-            className="text-[10px] text-red-500 hover:text-red-700 font-medium transition-colors"
-          >
-            Clear
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {value && (
+            <button
+              type="button"
+              onClick={() => onChange('')}
+              className="text-[10px] text-amber-600 hover:text-amber-800 font-medium transition-colors cursor-pointer"
+            >
+              Clear
+            </button>
+          )}
+          {onRemove && (
+            <button
+              type="button"
+              onClick={onRemove}
+              className="text-[10px] text-red-500 hover:text-red-700 font-medium transition-colors cursor-pointer"
+            >
+              Remove
+            </button>
+          )}
+        </div>
       </label>
 
       <div
@@ -236,9 +248,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
   const [size, setSize] = useState('');
   const [downloadUrl, setDownloadUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
-  const [screenshot1, setScreenshot1] = useState('');
-  const [screenshot2, setScreenshot2] = useState('');
-  const [screenshot3, setScreenshot3] = useState('');
+  const [screenshots, setScreenshots] = useState<string[]>(['']);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isTrending, setIsTrending] = useState(false);
   const [whatsNew, setWhatsNew] = useState('');
@@ -273,9 +283,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
     setSize('');
     setDownloadUrl('');
     setGithubUrl('');
-    setScreenshot1('');
-    setScreenshot2('');
-    setScreenshot3('');
+    setScreenshots(['']);
     setIsFeatured(false);
     setIsTrending(false);
     setWhatsNew('');
@@ -298,9 +306,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
     setSize(app.size);
     setDownloadUrl(app.downloadUrl || '#');
     setGithubUrl(app.githubUrl || '');
-    setScreenshot1(app.screenshots[0] || '');
-    setScreenshot2(app.screenshots[1] || '');
-    setScreenshot3(app.screenshots[2] || '');
+    setScreenshots(app.screenshots && app.screenshots.length > 0 ? [...app.screenshots] : ['']);
     setIsFeatured(app.isFeatured);
     setIsTrending(app.isTrending);
     setWhatsNew(app.whatsNew || '');
@@ -320,7 +326,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
     setSaving(true);
     setErrorMsg('');
 
-    const screenshots = [screenshot1, screenshot2, screenshot3].filter(url => url.trim() !== '');
+    const finalScreenshots = screenshots.filter(url => url && url.trim() !== '');
 
     const appData: any = {
       name,
@@ -333,7 +339,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
       developer,
       size,
       downloadUrl,
-      screenshots,
+      screenshots: finalScreenshots,
       isFeatured,
       isTrending,
       whatsNew,
@@ -692,23 +698,36 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
 
               {/* Screenshot URLs */}
               <div className="space-y-3">
-                <label className="text-xs font-semibold text-gray-600 block">Screenshots Showcase</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-gray-600 block">Screenshots Showcase</label>
+                  <button
+                    type="button"
+                    onClick={() => setScreenshots([...screenshots, ''])}
+                    className="text-xs text-[#01875f] hover:text-[#00704e] font-semibold flex items-center gap-1 cursor-pointer bg-emerald-50 hover:bg-emerald-100/80 px-3 py-1.5 rounded-lg transition-colors border border-emerald-100"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Add More Images
+                  </button>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <ImageUploader
-                    label="Screenshot 1"
-                    value={screenshot1}
-                    onChange={setScreenshot1}
-                  />
-                  <ImageUploader
-                    label="Screenshot 2"
-                    value={screenshot2}
-                    onChange={setScreenshot2}
-                  />
-                  <ImageUploader
-                    label="Screenshot 3"
-                    value={screenshot3}
-                    onChange={setScreenshot3}
-                  />
+                  {screenshots.map((url, idx) => (
+                    <div key={idx} className="relative group">
+                      <ImageUploader
+                        label={`Screenshot ${idx + 1}`}
+                        value={url}
+                        onChange={(newVal) => {
+                          const updated = [...screenshots];
+                          updated[idx] = newVal;
+                          setScreenshots(updated);
+                        }}
+                        onRemove={() => {
+                          const updated = [...screenshots];
+                          updated.splice(idx, 1);
+                          setScreenshots(updated.length > 0 ? updated : ['']);
+                        }}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -728,9 +747,7 @@ export default function AdminPanel({ apps, onRefreshApps, onClose }: AdminPanelP
                     setSize('');
                     setDownloadUrl('');
                     setGithubUrl('');
-                    setScreenshot1('');
-                    setScreenshot2('');
-                    setScreenshot3('');
+                    setScreenshots(['']);
                     setIsFeatured(false);
                     setIsTrending(false);
                     setWhatsNew('');
