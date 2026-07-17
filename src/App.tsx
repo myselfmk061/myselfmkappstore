@@ -472,7 +472,7 @@ export default function App() {
               <span className="text-[#01875f] font-semibold bg-emerald-50 px-2 py-0.5 rounded-md text-[10px] tracking-wide uppercase">Curation Engine v2.1</span>
             </p>
             <p className="font-sans text-gray-400 text-[11px] leading-relaxed max-w-md mx-auto">
-              © 2026 Myselfmk • Handcrafted layout adhering to premium material & play design guidelines. Direct APK releases for instant distribution.
+              © 2026 By Mahendra Bairwa (MyselfmkApps) made with ❤️
             </p>
           </div>
 
