@@ -32,21 +32,47 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !message) return;
 
     setIsSubmitting(true);
-    // Simulate API delivery
-    setTimeout(() => {
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/myselfmk061@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          subject: subject || "New Contact Message",
+          message: message,
+          _subject: `Myselfmk Appstore Contact: ${subject || "General Inquiry"}`
+        })
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        setName('');
+        setEmail('');
+        setSubject('');
+        setMessage('');
+      } else {
+        const errData = await response.json();
+        setSubmitError(errData?.message || "Failed to send message. Please try again or email directly.");
+      }
+    } catch (error) {
+      console.error("FormSubmit API submission error:", error);
+      setSubmitError("A connection error occurred. Please verify your internet and try again.");
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-      setName('');
-      setEmail('');
-      setSubject('');
-      setMessage('');
-    }, 1200);
+    }
   };
 
   return (
@@ -265,6 +291,12 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
                       className="w-full text-xs p-3 bg-gray-50 focus:bg-white text-gray-900 border border-gray-100 focus:border-[#01875f] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#01875f] transition-all resize-none"
                     />
                   </div>
+
+                  {submitError && (
+                    <div className="p-3 bg-rose-50 text-rose-700 rounded-xl text-xs font-semibold border border-rose-100/60 animate-fade-in" id="contact-error-banner">
+                      {submitError}
+                    </div>
+                  )}
 
                   <button
                     type="submit"
