@@ -21,7 +21,7 @@ export default function App() {
   const [apps, setApps] = useState<AppItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'home' | 'admin' | 'admin-login' | 'about' | 'contact' | 'privacy'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'admin' | 'admin-login' | 'about' | 'contact' | 'privacy' | 'faqs' | 'admin-profile' | 'terms'>('home');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const [adminUser, setAdminUser] = useState<any | null>(null);
@@ -180,8 +180,8 @@ export default function App() {
                   />
                 )}
 
-                {/* 3.5. ABOUT, CONTACT, AND PRIVACY PAGES */}
-                {(activeTab === 'about' || activeTab === 'contact' || activeTab === 'privacy') && (
+                {/* 3.5. ABOUT, CONTACT, FAQS, ADMIN PROFILE, PRIVACY AND TERMS PAGES */}
+                {(activeTab === 'about' || activeTab === 'contact' || activeTab === 'privacy' || activeTab === 'faqs' || activeTab === 'admin-profile' || activeTab === 'terms') && (
                   <FooterPages
                     pageType={activeTab}
                     onBack={() => setActiveTab('home')}
@@ -454,6 +454,30 @@ export default function App() {
             <button 
               onClick={() => {
                 setSelectedApp(null);
+                setActiveTab('faqs');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#01875f] hover:translate-y-[-1px] transition-all duration-200 cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1.5"
+              id="footer-faqs-link"
+            >
+              <span>FAQs</span>
+            </button>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <button 
+              onClick={() => {
+                setSelectedApp(null);
+                setActiveTab('admin-profile');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#01875f] hover:translate-y-[-1px] transition-all duration-200 cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1.5"
+              id="footer-admin-profile-link"
+            >
+              <span>Admin Profile</span>
+            </button>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <button 
+              onClick={() => {
+                setSelectedApp(null);
                 setActiveTab('privacy');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
@@ -461,6 +485,18 @@ export default function App() {
               id="footer-privacy-link"
             >
               <span>Privacy Policy</span>
+            </button>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <button 
+              onClick={() => {
+                setSelectedApp(null);
+                setActiveTab('terms');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#01875f] hover:translate-y-[-1px] transition-all duration-200 cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1.5"
+              id="footer-terms-link"
+            >
+              <span>Terms of Service</span>
             </button>
           </div>
 

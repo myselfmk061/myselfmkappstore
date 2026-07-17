@@ -16,11 +16,22 @@ import {
   Eye, 
   FileText, 
   HelpCircle,
-  Sparkles
+  Sparkles,
+  User,
+  Plus,
+  Minus,
+  Briefcase,
+  GraduationCap,
+  Heart,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Terminal,
+  BookOpen
 } from 'lucide-react';
 
 interface FooterPagesProps {
-  pageType: 'about' | 'contact' | 'privacy';
+  pageType: 'about' | 'contact' | 'privacy' | 'faqs' | 'admin-profile' | 'terms';
   onBack: () => void;
 }
 
@@ -33,6 +44,36 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // FAQ Accordion State
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  };
+
+  const faqs = [
+    {
+      question: "How do I download and install an APK from Myselfmk Appstore?",
+      answer: "Click on any app card in the marketplace to open the detailed app page. If the app has an active binary or APK upload, click on the prominent green 'Download APK' button. Once downloaded, open the APK file on your Android device. Note that you may need to enable 'Install from Unknown Sources' in your Android system security settings to proceed with the installation."
+    },
+    {
+      question: "Are the applications listed on this platform safe?",
+      answer: "Yes, absolutely. Every app release, update, and APK upload is individually reviewed, compiled, and hand-curated by our admin team before publication. However, as independent developer releases, they are not signed by traditional Google Play Store enterprise certificates. We always list the explicit system permissions requested by each app on its detail page so you can install with absolute confidence."
+    },
+    {
+      question: "Can I request or submit my own application?",
+      answer: "We are always looking for stellar indie applications, experimental games, or utility projects! Registered system creators and admins can upload and manage apps directly from the custom admin panel. If you are an external developer, use our Contact Form or email us directly at myselfmkapps@gmail.com with your project details, and our curation team will review it."
+    },
+    {
+      question: "Is there an Admin panel to manage these applications?",
+      answer: "Yes. Authorized curators can log in using their credentials (via Firebase Authentication) to access a fully customized Admin Dashboard. There, administrators can add new listings, upload release files, edit existing categories, and respond to community review logs in real-time."
+    },
+    {
+      question: "How can I write a review or provide feedback?",
+      answer: "We value community collaboration! Open any application detail page to read reviews and submit your own rating and written comments. Your review is stored securely in our Firestore database and displayed immediately to help other store visitors evaluate the application."
+    }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -416,6 +457,236 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
               </p>
             </section>
 
+          </div>
+        </div>
+      )}
+
+      {/* RENDER FAQS PAGE */}
+      {pageType === 'faqs' && (
+        <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-10 shadow-sm space-y-8" id="faqs-page">
+          <div className="space-y-3 border-b border-gray-50 pb-5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#01875f] flex items-center justify-center">
+              <HelpCircle className="w-5 h-5" />
+            </div>
+            <h1 className="font-sans font-extrabold text-2xl sm:text-3xl text-gray-800 tracking-tight">
+              Frequently Asked Questions
+            </h1>
+            <p className="text-xs text-gray-400">
+              Find quick answers about downloading APKs, safety guidelines, and developer submittals.
+            </p>
+          </div>
+
+          <div className="space-y-4" id="faq-accordion-container">
+            {faqs.map((faq, idx) => {
+              const isOpen = openFaqIndex === idx;
+              return (
+                <div 
+                  key={idx} 
+                  className={`border rounded-2xl transition-all duration-300 ${isOpen ? 'border-[#01875f] bg-emerald-50/10' : 'border-gray-100 bg-white hover:border-gray-200'}`}
+                >
+                  <button
+                    onClick={() => toggleFaq(idx)}
+                    className="w-full flex items-center justify-between p-5 text-left font-sans font-bold text-gray-800 text-xs sm:text-sm cursor-pointer select-none focus:outline-none"
+                  >
+                    <span>{faq.question}</span>
+                    <span className="ml-4 shrink-0 text-gray-400">
+                      {isOpen ? <ChevronUp className="w-4 h-4 text-[#01875f]" /> : <ChevronDown className="w-4 h-4" />}
+                    </span>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-5 pt-1 text-xs text-gray-500 leading-relaxed border-t border-gray-50/50">
+                          {faq.answer}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* RENDER ADMIN PROFILE PAGE */}
+      {pageType === 'admin-profile' && (
+        <div className="space-y-8" id="admin-profile-page">
+          {/* Main profile card */}
+          <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-10 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-emerald-500 via-[#01875f] to-teal-600"></div>
+            
+            <div className="relative pt-12 flex flex-col sm:flex-row items-center sm:items-end gap-6 mb-8">
+              <div className="w-28 h-28 rounded-full border-4 border-white bg-[#01875f] text-white flex items-center justify-center font-sans font-extrabold text-3xl shadow-md shrink-0">
+                MB
+              </div>
+              <div className="text-center sm:text-left space-y-2 pb-2">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <h1 className="font-sans font-extrabold text-2xl text-gray-800 tracking-tight">Mahendra Bairwa</h1>
+                  <span className="px-2 py-0.5 bg-emerald-100 text-[#01875f] text-[10px] font-mono rounded-full font-bold uppercase tracking-wider">Lead Creator</span>
+                </div>
+                <p className="text-xs text-gray-500 font-medium">Founder & Developer of MyselfmkApps</p>
+                <div className="flex items-center justify-center sm:justify-start gap-3 text-xs text-gray-400">
+                  <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-gray-400" /> India / Global</span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5 text-gray-400" /> myselfmkapps.com</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Content splits */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 border-t border-gray-50">
+              {/* Bio & Philosophy */}
+              <div className="md:col-span-2 space-y-6">
+                <div className="space-y-3">
+                  <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-2">
+                    <User className="w-4 h-4 text-[#01875f]" />
+                    Developer Biography
+                  </h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Hello! I'm Mahendra Bairwa, an independent full-stack developer and software curator specializing in high-performance Android distributions, lightweight web architectures, and seamless cloud deployments.
+                  </p>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Under the brand <strong>MyselfmkApps</strong>, my mission is to deliver secure, accessible, and fast utility APKs to end-users without the boilerplate overhead of traditional platforms. I designed this curation platform as a dynamic repository to track user analytics, host pristine assets, and provide lightning-fast deliveries.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-2">
+                    <Heart className="w-4 h-4 text-rose-500" />
+                    Development Philosophy
+                  </h3>
+                  <blockquote className="border-l-2 border-[#01875f] pl-4 py-1 text-xs text-gray-500 italic leading-relaxed">
+                    "Software should be beautifully simple, highly secure, and instantly accessible. Curation is an art of selecting only what delivers immediate value to the user."
+                  </blockquote>
+                </div>
+              </div>
+
+              {/* Skills & Quick Stats */}
+              <div className="space-y-6">
+                <div className="bg-gray-50 rounded-2xl p-5 space-y-4">
+                  <h4 className="font-sans font-bold text-gray-800 text-xs uppercase tracking-wider">Technical Specialties</h4>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-xs text-gray-600">
+                      <span className="font-semibold">Android Dev (Kotlin)</span>
+                      <span className="text-gray-400 font-mono">Expert</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: '92%' }}></div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-xs text-gray-600">
+                      <span className="font-semibold">Full Stack (Vite/React)</span>
+                      <span className="text-gray-400 font-mono">Advanced</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: '88%' }}></div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-xs text-gray-600">
+                      <span className="font-semibold">Firebase (DB/Auth/Rules)</span>
+                      <span className="text-gray-400 font-mono">Pro</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: '85%' }}></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Direct buttons */}
+                <div className="flex flex-col gap-2">
+                  <a 
+                    href="mailto:myselfmkapps@gmail.com"
+                    className="w-full flex items-center justify-center gap-2 bg-[#01875f] hover:bg-[#016f4e] text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition-colors text-center cursor-pointer select-none"
+                  >
+                    <Mail className="w-4 h-4" />
+                    Email Developer
+                  </a>
+                  <a 
+                    href="https://github.com/myselfmk061" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition-colors text-center cursor-pointer select-none"
+                  >
+                    <Github className="w-4 h-4" />
+                    Follow on GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* RENDER TERMS OF SERVICE PAGE */}
+      {pageType === 'terms' && (
+        <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-10 shadow-sm space-y-8" id="terms-page">
+          <div className="space-y-3 border-b border-gray-50 pb-5">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <h1 className="font-sans font-extrabold text-2xl sm:text-3xl text-gray-800 tracking-tight">
+              Terms of Service
+            </h1>
+            <p className="text-xs text-gray-400">
+              Last Updated: July 16, 2026 • Myselfmk Appstore Terms
+            </p>
+          </div>
+
+          <div className="space-y-6 text-xs text-gray-600 leading-relaxed">
+            <p>
+              Welcome to Myselfmk Appstore. By accessing or downloading materials from this platform, you agree to comply with and be bound by the following Terms and Conditions of use.
+            </p>
+
+            <section className="space-y-2">
+              <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-1.5">
+                <Terminal className="w-4 h-4 text-indigo-600" />
+                1. Acceptable Use License
+              </h3>
+              <p>
+                All applications, screenshots, and APK binaries hosted on this repository are provided solely for personal, non-commercial playtesting and usage. You may not decompile, reverse-engineer, or redistribute any release package without explicit consent from Mahendra Bairwa (MyselfmkApps).
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                2. User Reviews & Community Ethics
+              </h3>
+              <p>
+                Any user-contributed reviews, ratings, or comment logs published in our interactive channels must remain respectful and genuine. Spamming, advertising, posting malicious content, or artificial rating manipulation is strictly prohibited and will result in permanent Firebase account revocation.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-1.5">
+                <FileText className="w-4 h-4 text-amber-600" />
+                3. Disclaimer of Warranties
+              </h3>
+              <p>
+                All software and resources are distributed on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind. You accept complete responsibility for your mobile device security and backup procedures when installing downloaded APK releases from our channels.
+              </p>
+            </section>
+
+            <section className="space-y-2 border-t border-gray-50 pt-5">
+              <h3 className="font-sans font-bold text-gray-800 text-sm">
+                4. Questions & Clarification
+              </h3>
+              <p>
+                If you require official permissions or have inquiries regarding our brand guidelines, please submit a message using our interactive contact system or contact us at <a href="mailto:myselfmkapps@gmail.com" className="font-semibold text-[#01875f] hover:underline">myselfmkapps@gmail.com</a>.
+              </p>
+            </section>
           </div>
         </div>
       )}
