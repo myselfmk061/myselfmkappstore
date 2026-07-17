@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Search, ShieldAlert, LogIn, LogOut, User, Menu } from 'lucide-react';
+import { Search, ShieldAlert, LogIn, LogOut, User, Menu, LayoutDashboard } from 'lucide-react';
 
 interface HeaderProps {
   searchQuery: string;
@@ -61,8 +61,8 @@ export default function Header({
             <span className="font-sans font-bold text-xl text-gray-800 tracking-tight hidden sm:inline-block">
               Myselfmk <span className="text-[#01875f]">Appstore</span>
             </span>
-            <span className="font-sans font-bold text-lg text-[#01875f] sm:hidden">
-              MKstore
+            <span className="font-sans font-bold text-base text-gray-800 tracking-tight sm:hidden">
+              Myselfmk <span className="text-[#01875f]">Appstore</span>
             </span>
           </div>
 
@@ -94,15 +94,16 @@ export default function Header({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setActiveTab('admin')}
-                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide border transition-all ${
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide border transition-all cursor-pointer ${
                     activeTab === 'admin'
                       ? 'bg-[#01875f]/10 text-[#01875f] border-[#01875f]/20'
                       : 'bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100'
                   }`}
                   id="admin-active-btn"
                 >
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Admin Desk
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                  <LayoutDashboard className="w-3.5 h-3.5 shrink-0 text-[#01875f]" />
+                  <span className="hidden sm:inline">Admin Desk</span>
                 </button>
                 <button
                   onClick={onLogoutClick}

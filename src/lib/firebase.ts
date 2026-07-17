@@ -115,11 +115,7 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
   throw new Error(JSON.stringify(errInfo));
 }
 
-export const isFirebaseActive = (): boolean => {
-  const forceLocal = localStorage.getItem('force_local_test_mode') === 'true';
-  if (forceLocal) return false;
-  return isConfigured && firestore !== null;
-};
+export const isFirebaseActive = (): boolean => isConfigured && firestore !== null;
 
 export const getDbModeLabel = (): string => {
   return isFirebaseActive() 
@@ -327,26 +323,17 @@ export const addAppReview = async (appId: string, review: Omit<Review, 'id' | 'd
 // ==========================================
 
 export const subscribeToAuth = (callback: (user: any | null) => void) => {
-  if (isFirebaseActive() && auth) {
+  if (isConfigured && auth) {
     return onAuthStateChanged(auth, callback);
   } else {
-    // Look for mock local session
-    const mockUser = localStorage.getItem('mock_admin_user');
-    if (mockUser) {
-      try {
-        callback(JSON.parse(mockUser));
-        return () => {};
-      } catch (e) {
-        // no-op
-      }
-    }
+    // No-op subscription when Firebase is not active
     callback(null);
     return () => {};
   }
 };
 
 export const adminLogin = async (email: string, password: string): Promise<any> => {
-  if (isFirebaseActive() && auth) {
+  if (isConfigured && auth) {
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
       return cred.user;
@@ -358,14 +345,12 @@ export const adminLogin = async (email: string, password: string): Promise<any> 
       if (errCode === 'auth/configuration-not-found' || errMsg.includes('configuration-not-found')) {
         console.warn('Firebase Auth: Email/Password provider not enabled in console. Checking for local fallback...');
         if (email === 'admin@myselfmk.com' && password === 'password123') {
-          const fallbackUser = {
+          return {
             uid: 'mock-admin-fallback',
             email: 'admin@myselfmk.com',
             displayName: 'Admin (Local Fallback)',
             isFallback: true
           };
-          localStorage.setItem('mock_admin_user', JSON.stringify(fallbackUser));
-          return fallbackUser;
         } else {
           throw new Error(
             'Firebase Authentication error: The "Email/Password" sign-in provider is not enabled in your Firebase Console.\n\n' +
@@ -401,21 +386,18 @@ export const adminLogin = async (email: string, password: string): Promise<any> 
   } else {
     // Local demo login fallback when Firebase is not active
     if (email === 'admin@myselfmk.com' && password === 'password123') {
-      const mockUser = {
+      return {
         uid: 'demo-admin',
         email: 'admin@myselfmk.com',
         displayName: 'Demo Admin'
       };
-      localStorage.setItem('mock_admin_user', JSON.stringify(mockUser));
-      return mockUser;
     }
     throw new Error('Invalid credentials. Use the demo account: admin@myselfmk.com / password123');
   }
 };
 
 export const adminLogout = async (): Promise<void> => {
-  localStorage.removeItem('mock_admin_user');
-  if (isFirebaseActive() && auth) {
+  if (isConfigured && auth) {
     await signOut(auth);
   }
 };

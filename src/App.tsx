@@ -134,9 +134,17 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-3 text-gray-500 font-medium" id="master-loader">
-            <Loader2 className="w-10 h-10 text-[#01875f] animate-spin" />
-            <span className="text-xs tracking-wider">Contacting Marketplace Server...</span>
+          <div className="flex flex-col items-center justify-center py-32 gap-4 text-gray-600 font-medium" id="master-loader">
+            <div className="relative flex items-center justify-center">
+              <div className="absolute w-16 h-16 border-4 border-emerald-100 rounded-full"></div>
+              <div className="absolute w-16 h-16 border-4 border-t-[#01875f] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-[#01875f] shadow-sm">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                </svg>
+              </div>
+            </div>
+            <span className="text-sm font-semibold tracking-wide text-gray-700 animate-pulse">Please wait...</span>
           </div>
         ) : (
           <div className="space-y-8" id="store-workspace">
