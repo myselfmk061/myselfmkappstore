@@ -420,50 +420,78 @@ export default function App() {
       </main>
 
       {/* Styled Human Footer */}
-      <footer className="bg-white border-t border-gray-100 py-8 mt-12 text-center text-xs text-gray-400" id="store-footer">
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-4 text-xs font-semibold text-gray-500">
-          <button 
-            onClick={() => {
-              setSelectedApp(null);
-              setActiveTab('about');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="hover:text-[#01875f] transition-colors cursor-pointer bg-transparent border-none p-0"
-            id="footer-about-link"
-          >
-            About
-          </button>
-          <span className="text-gray-200 hidden sm:inline">•</span>
-          <button 
-            onClick={() => {
-              setSelectedApp(null);
-              setActiveTab('contact');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="hover:text-[#01875f] transition-colors cursor-pointer bg-transparent border-none p-0"
-            id="footer-contact-link"
-          >
-            Contact
-          </button>
-          <span className="text-gray-200 hidden sm:inline">•</span>
-          <button 
-            onClick={() => {
-              setSelectedApp(null);
-              setActiveTab('privacy');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="hover:text-[#01875f] transition-colors cursor-pointer bg-transparent border-none p-0"
-            id="footer-privacy-link"
-          >
-            Privacy Policy
-          </button>
+      <footer className="bg-gray-50/60 border-t border-gray-100/80 py-10 sm:py-12 mt-16 text-center text-xs text-gray-400 relative overflow-hidden" id="store-footer">
+        {/* Modern subtle ambient glow at bottom */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-80 h-16 bg-[#01875f]/5 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto px-6 space-y-6 relative z-10" id="footer-content-wrapper">
+          {/* Main Footer Navigation */}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs font-semibold text-gray-500" id="footer-links-container">
+            <button 
+              onClick={() => {
+                setSelectedApp(null);
+                setActiveTab('about');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#01875f] hover:translate-y-[-1px] transition-all duration-200 cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1.5"
+              id="footer-about-link"
+            >
+              <span>About Store</span>
+            </button>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <button 
+              onClick={() => {
+                setSelectedApp(null);
+                setActiveTab('contact');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#01875f] hover:translate-y-[-1px] transition-all duration-200 cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1.5"
+              id="footer-contact-link"
+            >
+              <span>Contact & Support</span>
+            </button>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <button 
+              onClick={() => {
+                setSelectedApp(null);
+                setActiveTab('privacy');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#01875f] hover:translate-y-[-1px] transition-all duration-200 cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1.5"
+              id="footer-privacy-link"
+            >
+              <span>Privacy Policy</span>
+            </button>
+          </div>
+
+          {/* Credits and Branding */}
+          <div className="space-y-3 pt-2" id="footer-branding">
+            <p className="font-sans font-medium text-gray-600 flex items-center justify-center gap-2 text-xs sm:text-sm">
+              <span>Myselfmk Appstore</span>
+              <span className="text-gray-300">|</span>
+              <span className="text-[#01875f] font-semibold bg-emerald-50 px-2 py-0.5 rounded-md text-[10px] tracking-wide uppercase">Curation Engine v2.1</span>
+            </p>
+            <p className="font-sans text-gray-400 text-[11px] leading-relaxed max-w-md mx-auto">
+              © 2026 Myselfmk • Handcrafted layout adhering to premium material & play design guidelines. Direct APK releases for instant distribution.
+            </p>
+          </div>
+
+          {/* Real-time Status Indicators */}
+          <div className="flex items-center justify-center gap-4 pt-3 border-t border-gray-100 max-w-xs mx-auto text-[10px] font-mono text-gray-400" id="footer-status-bar">
+            <div className="flex items-center gap-1.5" id="status-live-node">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>Services Live</span>
+            </div>
+            <span className="text-gray-200">|</span>
+            <div className="flex items-center gap-1.5" id="status-db-secure">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+              <span>Cloud DB Active</span>
+            </div>
+          </div>
         </div>
-        <p className="font-sans font-medium mb-1.5 text-gray-500">
-          Myselfmk Appstore © 2026 • Curated with Google Play architecture
-        </p>
-        <p className="font-mono text-[10px] tracking-wide text-gray-400">
-          Full-Stack Server Enabled • Optimized for direct APK releases
-        </p>
       </footer>
 
     </div>
