@@ -42,7 +42,7 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
     setSubmitError(null);
 
     try {
-      const response = await fetch("https://formsubmit.co/ajax/myselfmk061@gmail.com", {
+      const response = await fetch("https://formsubmit.co/ajax/myselfmkapps@gmail.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -192,8 +192,8 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-sans font-semibold text-xs text-gray-400 uppercase tracking-wider">Email Channels</h4>
-                  <a href="mailto:myselfmk061@gmail.com" className="text-sm font-bold text-gray-800 hover:text-[#01875f] transition-colors break-all">
-                    myselfmk061@gmail.com
+                  <a href="mailto:myselfmkapps@gmail.com" className="text-sm font-bold text-gray-800 hover:text-[#01875f] transition-colors break-all">
+                    myselfmkapps@gmail.com
                   </a>
                 </div>
               </div>
@@ -412,7 +412,7 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
                 5. Inquiries and Contact
               </h3>
               <p>
-                If you require clarification on how data is cached or wish to query administrative credentials, you can reach the curation team immediately at <a href="mailto:myselfmk061@gmail.com" className="font-semibold text-[#01875f] hover:underline">myselfmk061@gmail.com</a>.
+                If you require clarification on how data is cached or wish to query administrative credentials, you can reach the curation team immediately at <a href="mailto:myselfmkapps@gmail.com" className="font-semibold text-[#01875f] hover:underline">myselfmkapps@gmail.com</a>.
               </p>
             </section>
 
