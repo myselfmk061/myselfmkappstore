@@ -4,8 +4,8 @@
  */
 
 import React, { useState } from 'react';
-import { adminLogin, isFirebaseActive } from '../lib/firebase';
-import { ShieldCheck, AlertCircle, Key, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { adminLogin, loginWithGithub, isFirebaseActive } from '../lib/firebase';
+import { ShieldCheck, AlertCircle, Key, Mail, Lock, ArrowLeft, Github } from 'lucide-react';
 
 interface AdminLoginProps {
   onLoginSuccess: (user: any) => void;

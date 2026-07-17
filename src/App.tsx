@@ -16,6 +16,7 @@ import { AppItem } from './types';
 import { SEED_APPS } from './data';
 import { fetchAllApps, fetchAppById, subscribeToAuth, adminLogout, isFirebaseActive } from './lib/firebase';
 import { Star, Flame, Award, HelpCircle, Loader2, Database, Key, AlertTriangle, RefreshCw } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export default function App() {
   const [apps, setApps] = useState<AppItem[]>([]);
@@ -425,9 +426,29 @@ export default function App() {
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-80 h-16 bg-[#01875f]/5 rounded-full blur-3xl pointer-events-none"></div>
         
         <div className="max-w-7xl mx-auto px-6 space-y-6 relative z-10" id="footer-content-wrapper">
-          {/* Main Footer Navigation */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs font-semibold text-gray-500" id="footer-links-container">
-            <button 
+          {/* Main Footer Navigation with subtle scroll-triggered fade-in animation */}
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.05,
+                  delayChildren: 0.1,
+                }
+              }
+            }}
+            className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-y-3 sm:gap-x-6 text-xs font-semibold text-gray-500" 
+            id="footer-links-container"
+          >
+            <motion.button 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               onClick={() => {
                 setSelectedApp(null);
                 setActiveTab('about');
@@ -437,9 +458,21 @@ export default function App() {
               id="footer-about-link"
             >
               <span>About Store</span>
-            </button>
-            <span className="text-gray-300 hidden sm:inline">•</span>
-            <button 
+            </motion.button>
+            <motion.span 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
+              className="text-gray-300 hidden sm:inline"
+            >
+              •
+            </motion.span>
+            <motion.button 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               onClick={() => {
                 setSelectedApp(null);
                 setActiveTab('contact');
@@ -449,9 +482,21 @@ export default function App() {
               id="footer-contact-link"
             >
               <span>Contact & Support</span>
-            </button>
-            <span className="text-gray-300 hidden sm:inline">•</span>
-            <button 
+            </motion.button>
+            <motion.span 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
+              className="text-gray-300 hidden sm:inline"
+            >
+              •
+            </motion.span>
+            <motion.button 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               onClick={() => {
                 setSelectedApp(null);
                 setActiveTab('faqs');
@@ -461,9 +506,21 @@ export default function App() {
               id="footer-faqs-link"
             >
               <span>FAQs</span>
-            </button>
-            <span className="text-gray-300 hidden sm:inline">•</span>
-            <button 
+            </motion.button>
+            <motion.span 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
+              className="text-gray-300 hidden sm:inline"
+            >
+              •
+            </motion.span>
+            <motion.button 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               onClick={() => {
                 setSelectedApp(null);
                 setActiveTab('admin-profile');
@@ -473,9 +530,21 @@ export default function App() {
               id="footer-admin-profile-link"
             >
               <span>Admin Profile</span>
-            </button>
-            <span className="text-gray-300 hidden sm:inline">•</span>
-            <button 
+            </motion.button>
+            <motion.span 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
+              className="text-gray-300 hidden sm:inline"
+            >
+              •
+            </motion.span>
+            <motion.button 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               onClick={() => {
                 setSelectedApp(null);
                 setActiveTab('privacy');
@@ -485,9 +554,21 @@ export default function App() {
               id="footer-privacy-link"
             >
               <span>Privacy Policy</span>
-            </button>
-            <span className="text-gray-300 hidden sm:inline">•</span>
-            <button 
+            </motion.button>
+            <motion.span 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
+              className="text-gray-300 hidden sm:inline"
+            >
+              •
+            </motion.span>
+            <motion.button 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               onClick={() => {
                 setSelectedApp(null);
                 setActiveTab('terms');
@@ -497,9 +578,21 @@ export default function App() {
               id="footer-terms-link"
             >
               <span>Terms of Service</span>
-            </button>
-            <span className="text-gray-300 hidden sm:inline">•</span>
-            <button 
+            </motion.button>
+            <motion.span 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
+              className="text-gray-300 hidden sm:inline"
+            >
+              •
+            </motion.span>
+            <motion.button 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               onClick={() => {
                 setSelectedApp(null);
                 setActiveTab('dev-portal');
@@ -513,9 +606,21 @@ export default function App() {
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
               </span>
               <span>Upload Apps (Coming Soon)</span>
-            </button>
-            <span className="text-gray-300 hidden sm:inline">•</span>
-            <button 
+            </motion.button>
+            <motion.span 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
+              className="text-gray-300 hidden sm:inline"
+            >
+              •
+            </motion.span>
+            <motion.button 
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+              }}
               onClick={() => {
                 setSelectedApp(null);
                 setActiveTab('dev-terms');
@@ -525,8 +630,8 @@ export default function App() {
               id="footer-dev-terms-link"
             >
               <span>Developer Terms</span>
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
           {/* Credits and Branding */}
           <div className="space-y-3 pt-2" id="footer-branding">

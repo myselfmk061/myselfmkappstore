@@ -60,6 +60,7 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
 
   // FAQ Accordion State
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [avatarError, setAvatarError] = useState(false);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -576,8 +577,18 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
             <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-emerald-500 via-[#01875f] to-teal-600"></div>
             
             <div className="relative pt-12 flex flex-col sm:flex-row items-center sm:items-end gap-6 mb-8">
-              <div className="w-28 h-28 rounded-full border-4 border-white bg-[#01875f] text-white flex items-center justify-center font-sans font-extrabold text-3xl shadow-md shrink-0">
-                MB
+              <div className="w-28 h-28 rounded-full border-4 border-white bg-[#01875f] text-white flex items-center justify-center font-sans font-extrabold text-3xl shadow-md shrink-0 overflow-hidden">
+                {!avatarError ? (
+                  <img
+                    src="https://github.com/myselfmk061.png"
+                    alt="Mahendra Bairwa"
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                    onError={() => setAvatarError(true)}
+                  />
+                ) : (
+                  "MB"
+                )}
               </div>
               <div className="text-center sm:text-left space-y-2 pb-2">
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
