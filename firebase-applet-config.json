@@ -1,8 +1,11 @@
 {
+  "projectId": "myselfmkappstore",
+  "appId": "1:338232305017:web:db6f645b50fbbb9c28fba8",
   "apiKey": "AIzaSyCBYYj0N_P3_QC-Ysx2xrzgyIr7uO-vTOA",
   "authDomain": "myselfmkappstore.firebaseapp.com",
-  "projectId": "myselfmkappstore",
+  "firestoreDatabaseId": "ai-studio-myselfmkappstore-e2eb9961-29a9-4098-9ff1-f7298ec85d54",
   "storageBucket": "myselfmkappstore.firebasestorage.app",
   "messagingSenderId": "338232305017",
-  "appId": "1:338232305017:web:50dc1b44338f7b9a28fba8"
+  "measurementId": "",
+  "recaptchaSiteKey": ""
 }
