@@ -11,6 +11,7 @@ import AppCard from './components/AppCard';
 import AppDetailView from './components/AppDetailView';
 import AdminPanel from './components/AdminPanel';
 import AdminLogin from './components/AdminLogin';
+import FooterPages from './components/FooterPages';
 import { AppItem } from './types';
 import { SEED_APPS } from './data';
 import { fetchAllApps, fetchAppById, subscribeToAuth, adminLogout, isFirebaseActive } from './lib/firebase';
@@ -20,7 +21,7 @@ export default function App() {
   const [apps, setApps] = useState<AppItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'home' | 'admin' | 'admin-login'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'admin' | 'admin-login' | 'about' | 'contact' | 'privacy'>('home');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
   const [adminUser, setAdminUser] = useState<any | null>(null);
@@ -176,6 +177,14 @@ export default function App() {
                       setActiveTab('admin');
                     }}
                     onCancel={() => setActiveTab('home')}
+                  />
+                )}
+
+                {/* 3.5. ABOUT, CONTACT, AND PRIVACY PAGES */}
+                {(activeTab === 'about' || activeTab === 'contact' || activeTab === 'privacy') && (
+                  <FooterPages
+                    pageType={activeTab}
+                    onBack={() => setActiveTab('home')}
                   />
                 )}
 
@@ -412,6 +421,43 @@ export default function App() {
 
       {/* Styled Human Footer */}
       <footer className="bg-white border-t border-gray-100 py-8 mt-12 text-center text-xs text-gray-400" id="store-footer">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-4 text-xs font-semibold text-gray-500">
+          <button 
+            onClick={() => {
+              setSelectedApp(null);
+              setActiveTab('about');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="hover:text-[#01875f] transition-colors cursor-pointer bg-transparent border-none p-0"
+            id="footer-about-link"
+          >
+            About
+          </button>
+          <span className="text-gray-200 hidden sm:inline">•</span>
+          <button 
+            onClick={() => {
+              setSelectedApp(null);
+              setActiveTab('contact');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="hover:text-[#01875f] transition-colors cursor-pointer bg-transparent border-none p-0"
+            id="footer-contact-link"
+          >
+            Contact
+          </button>
+          <span className="text-gray-200 hidden sm:inline">•</span>
+          <button 
+            onClick={() => {
+              setSelectedApp(null);
+              setActiveTab('privacy');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="hover:text-[#01875f] transition-colors cursor-pointer bg-transparent border-none p-0"
+            id="footer-privacy-link"
+          >
+            Privacy Policy
+          </button>
+        </div>
         <p className="font-sans font-medium mb-1.5 text-gray-500">
           Myselfmk Appstore © 2026 • Curated with Google Play architecture
         </p>
