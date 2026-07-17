@@ -498,6 +498,34 @@ export default function App() {
             >
               <span>Terms of Service</span>
             </button>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <button 
+              onClick={() => {
+                setSelectedApp(null);
+                setActiveTab('dev-portal');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#01875f] hover:translate-y-[-1px] transition-all duration-200 cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1.5 text-amber-600/95"
+              id="footer-dev-portal-link"
+            >
+              <span className="relative flex h-1.5 w-1.5 sm:mr-0.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+              </span>
+              <span>Upload Apps (Coming Soon)</span>
+            </button>
+            <span className="text-gray-300 hidden sm:inline">•</span>
+            <button 
+              onClick={() => {
+                setSelectedApp(null);
+                setActiveTab('dev-terms');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hover:text-[#01875f] hover:translate-y-[-1px] transition-all duration-200 cursor-pointer bg-transparent border-none p-0 inline-flex items-center gap-1.5"
+              id="footer-dev-terms-link"
+            >
+              <span>Developer Terms</span>
+            </button>
           </div>
 
           {/* Credits and Branding */}

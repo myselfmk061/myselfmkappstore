@@ -27,11 +27,16 @@ import {
   ChevronDown,
   ChevronUp,
   Terminal,
-  BookOpen
+  BookOpen,
+  UploadCloud,
+  Wrench,
+  ShieldAlert,
+  Activity,
+  Hourglass
 } from 'lucide-react';
 
 interface FooterPagesProps {
-  pageType: 'about' | 'contact' | 'privacy' | 'faqs' | 'admin-profile' | 'terms';
+  pageType: 'about' | 'contact' | 'privacy' | 'faqs' | 'admin-profile' | 'terms' | 'dev-portal' | 'dev-terms';
   onBack: () => void;
 }
 
@@ -44,6 +49,14 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Developer Beta Signup Form State
+  const [devName, setDevName] = useState('');
+  const [devEmail, setDevEmail] = useState('');
+  const [devAppDesc, setDevAppDesc] = useState('');
+  const [isDevSubmitting, setIsDevSubmitting] = useState(false);
+  const [devSubmitted, setDevSubmitted] = useState(false);
+  const [devSubmitError, setDevSubmitError] = useState<string | null>(null);
 
   // FAQ Accordion State
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -113,6 +126,46 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
       setSubmitError("A connection error occurred. Please verify your internet and try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDevSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!devName || !devEmail || !devAppDesc) return;
+
+    setIsDevSubmitting(true);
+    setDevSubmitError(null);
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/myselfmkapps@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          name: devName,
+          email: devEmail,
+          subject: "Developer Beta Access Request",
+          appDescription: devAppDesc,
+          _subject: `Myselfmk Appstore - Developer Beta Access: ${devName}`
+        })
+      });
+
+      if (response.ok) {
+        setDevSubmitted(true);
+        setDevName('');
+        setDevEmail('');
+        setDevAppDesc('');
+      } else {
+        const errData = await response.json();
+        setDevSubmitError(errData?.message || "Failed to submit request. Please try again or email directly.");
+      }
+    } catch (error) {
+      console.error("FormSubmit API developer signup error:", error);
+      setDevSubmitError("A connection error occurred. Please verify your internet and try again.");
+    } finally {
+      setIsDevSubmitting(false);
     }
   };
 
@@ -685,6 +738,273 @@ export default function FooterPages({ pageType, onBack }: FooterPagesProps) {
               </h3>
               <p>
                 If you require official permissions or have inquiries regarding our brand guidelines, please submit a message using our interactive contact system or contact us at <a href="mailto:myselfmkapps@gmail.com" className="font-semibold text-[#01875f] hover:underline">myselfmkapps@gmail.com</a>.
+              </p>
+            </section>
+          </div>
+        </div>
+      )}
+
+      {/* RENDER DEVELOPER PORTAL (COMING SOON) PAGE */}
+      {pageType === 'dev-portal' && (
+        <div className="space-y-8 animate-fade-in" id="dev-portal-page">
+          {/* Hero Banner Card */}
+          <div className="bg-gradient-to-tr from-[#01875f]/5 via-emerald-50/20 to-white border border-[#01875f]/15 rounded-3xl p-8 sm:p-10 relative overflow-hidden shadow-sm">
+            <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-[#01875f] text-[10px] font-mono uppercase tracking-wider animate-pulse">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              Under Active Development
+            </div>
+            <div className="relative space-y-4 max-w-2xl">
+              <div className="w-12 h-12 rounded-2xl bg-[#01875f]/10 text-[#01875f] flex items-center justify-center">
+                <UploadCloud className="w-6 h-6 animate-bounce" />
+              </div>
+              <h1 className="font-sans font-extrabold text-2xl sm:text-3xl text-gray-800 tracking-tight">
+                Developer Portal <span className="text-[#01875f]">Coming Soon</span>
+              </h1>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Empowering independent Android & Full-Stack creators to list, distribute, and track their APK files, live deployment logs, and review streams. Our custom-curated portal is under active construction to enable frictionless application submissions.
+              </p>
+            </div>
+          </div>
+
+          {/* Planned Features Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" id="dev-planned-features">
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#01875f] flex items-center justify-center">
+                <UploadCloud className="w-5 h-5" />
+              </div>
+              <h3 className="font-sans font-bold text-sm text-gray-800">Frictionless APK Uploads</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Directly upload your compiled binaries and write metadata details. Our automated and manual verification cycles get your build listed within minutes.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
+                <Activity className="w-5 h-5" />
+              </div>
+              <h3 className="font-sans font-bold text-sm text-gray-800">Live Telemetry & Insights</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Monitor live statistics including total views, unique device downloads, active system profiles, and feedback rates on your dedicated panel.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <Cpu className="w-5 h-5" />
+              </div>
+              <h3 className="font-sans font-bold text-sm text-gray-800">Reviews & Testing Loops</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Read, respond, and subscribe to user review notifications. Foster robust community relationships and run private test releases seamlessly.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                <Wrench className="w-5 h-5" />
+              </div>
+              <h3 className="font-sans font-bold text-sm text-gray-800">Metadata Customizer</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Customize your store screenshots, changelog text, system permissions indicators, category tagging, and links to your personal portfolios.
+              </p>
+            </div>
+          </div>
+
+          {/* Interactive Signup Form for Early Access */}
+          <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-sm">
+            <AnimatePresence mode="wait">
+              {!devSubmitted ? (
+                <motion.form 
+                  key="dev-signup-form"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onSubmit={handleDevSubmit}
+                  className="space-y-4"
+                  id="dev-signup-form-element"
+                >
+                  <div className="space-y-1">
+                    <h2 className="font-sans font-bold text-gray-800 text-base">Request Early Developer Beta Access</h2>
+                    <p className="text-xs text-gray-400">Apply to become a curated creator and upload your own applications upon our private sandbox release.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Developer / Studio Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={devName}
+                        onChange={(e) => setDevName(e.target.value)}
+                        placeholder="e.g. Apex Apps"
+                        className="w-full text-xs p-3 bg-gray-50 focus:bg-white text-gray-900 border border-gray-100 focus:border-[#01875f] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#01875f] transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Contact Email *</label>
+                      <input
+                        type="email"
+                        required
+                        value={devEmail}
+                        onChange={(e) => setDevEmail(e.target.value)}
+                        placeholder="developer@example.com"
+                        className="w-full text-xs p-3 bg-gray-50 focus:bg-white text-gray-900 border border-gray-100 focus:border-[#01875f] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#01875f] transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Target App Details & Portfolios *</label>
+                    <textarea
+                      required
+                      rows={3}
+                      value={devAppDesc}
+                      onChange={(e) => setDevAppDesc(e.target.value)}
+                      placeholder="Briefly describe the Android APKs or web previews you plan to publish, or provide links to your current projects..."
+                      className="w-full text-xs p-3 bg-gray-50 focus:bg-white text-gray-900 border border-gray-100 focus:border-[#01875f] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#01875f] transition-all resize-none"
+                    />
+                  </div>
+
+                  {devSubmitError && (
+                    <div className="p-3 bg-rose-50 text-rose-700 rounded-xl text-xs font-semibold border border-rose-100/60" id="dev-error-banner">
+                      {devSubmitError}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isDevSubmitting || !devName || !devEmail || !devAppDesc}
+                    className="w-full flex items-center justify-center gap-2 bg-[#01875f] hover:bg-[#016f4e] disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold text-xs py-3 px-4 rounded-xl transition-all cursor-pointer select-none shadow-sm"
+                    id="submit-dev-beta-btn"
+                  >
+                    {isDevSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Delivering Application...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-3.5 h-3.5" />
+                        Apply for Developer Beta
+                      </>
+                    )}
+                  </button>
+                </motion.form>
+              ) : (
+                <motion.div 
+                  key="dev-success-card"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="py-10 text-center space-y-4 animate-fade-in"
+                  id="dev-success-panel"
+                >
+                  <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-[#01875f]">
+                    <CheckCircle className="w-10 h-10 animate-bounce" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <h3 className="font-sans font-bold text-gray-800 text-base">Beta Request Submitted!</h3>
+                    <p className="text-xs text-gray-500 max-w-sm mx-auto leading-relaxed">
+                      Thank you for applying. Your developer information has been logged. Our curation team will review your application and coordinate early sandbox access credentials at the provided email.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setDevSubmitted(false)}
+                    className="text-xs font-semibold text-[#01875f] bg-emerald-50 hover:bg-[#01875f]/10 py-2 px-5 rounded-full transition-all cursor-pointer"
+                  >
+                    Submit Another Portfolio
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      )}
+
+      {/* RENDER DEVELOPER TERMS & CONDITIONS (COMING SOON) PAGE */}
+      {pageType === 'dev-terms' && (
+        <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-10 shadow-sm space-y-8 animate-fade-in" id="dev-terms-page">
+          <div className="space-y-3 border-b border-gray-50 pb-5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#01875f] flex items-center justify-center">
+              <ShieldAlert className="w-5 h-5" />
+            </div>
+            <h1 className="font-sans font-extrabold text-2xl sm:text-3xl text-gray-800 tracking-tight">
+              Developer Terms & Conditions
+            </h1>
+            <p className="text-xs text-gray-400">
+              Last Updated: July 16, 2026 • Curation Sandbox Release Preview
+            </p>
+          </div>
+
+          <div className="space-y-6 text-xs text-gray-600 leading-relaxed">
+            <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 text-[#01875f] leading-relaxed">
+              <span className="font-bold uppercase tracking-wider text-[10px] block mb-1">Developer Notice:</span>
+              This constitutes the formal Terms of Service governing third-party developer releases on the Myselfmk Appstore sandbox ecosystem. By requesting early beta access or listing an app on our catalog, you acknowledge compliance with these constraints.
+            </div>
+
+            <section className="space-y-2">
+              <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-1.5">
+                <User className="w-4 h-4 text-emerald-600" />
+                1. Developer Eligibility & Workspace Registrations
+              </h3>
+              <p>
+                To register as an external software curator, you must pass initial portfolio screening. Only valid email identifiers are accepted for creator dashboard accounts via Firebase Authentication. You agree to provide current, accurate information and claim namespaces strictly corresponding to your trademarked products.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h3 className="font-sans font-bold text-[#01875f] text-sm flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4" />
+                2. Application Safety, Permissions, & Malware Policies
+              </h3>
+              <p>
+                Safety is the absolute cornerstone of our storefront. Applications submitted by developers are strictly prohibited from including:
+              </p>
+              <ul className="list-disc pl-5 space-y-1 text-gray-500">
+                <li>Malicious binaries, logic bombs, ransomware, or keyloggers.</li>
+                <li>Undisclosed tracking cookies, analytics pixels, or telemetry collectors.</li>
+                <li>Intrusive, non-consensual advertising widgets or background data mining routines.</li>
+                <li>Hidden or unnecessary system permissions (e.g., requesting SMS reading or Call logs for simple utilities).</li>
+              </ul>
+              <p>
+                All requested hardware permissions (camera, location, memory storage access) must be explicitly listed on the app detail page. Non-compliance results in immediate account suspension.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-1.5">
+                <UploadCloud className="w-4 h-4 text-[#01875f]" />
+                3. APK Distribution License
+              </h3>
+              <p>
+                Developers retain full ownership and copyright of their uploaded codebases and compilations. By uploading a binary (APK) or linking a web preview on the Myselfmk Appstore, you grant Mahendra Bairwa (MyselfmkApps) a non-exclusive, worldwide, royalty-free, fully-paid license to host, cache, distribute, demonstrate, and visually display your product screenshots on the catalog.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-1.5">
+                <Hourglass className="w-4 h-4 text-amber-600 animate-spin" style={{ animationDuration: '4s' }} />
+                4. Curation, Vetting, and Delisting Rights
+              </h3>
+              <p>
+                Myselfmk Appstore operates as an actively-moderated catalog. The platform reserves the unconditional right to review, reject, update, or de-list any application binary or developer workspace without prior notification, based on system performance logs, user feedback, or malware alerts.
+              </p>
+            </section>
+
+            <section className="space-y-2">
+              <h3 className="font-sans font-bold text-gray-800 text-sm flex items-center gap-1.5">
+                <ShieldAlert className="w-4 h-4 text-rose-500" />
+                5. Indemnification & Complete Disclaimer of Liability
+              </h3>
+              <p>
+                As a developer, you warrant that your software does not infringe on intellectual property, violate local safety codes, or compromise user hardware. You agree to indemnify and hold harmless Myselfmk Appstore, its affiliates, and Mahendra Bairwa from any litigation, damages, losses, or costs arising from your application's deployment.
+              </p>
+            </section>
+
+            <section className="space-y-2 border-t border-gray-50 pt-5">
+              <h3 className="font-sans font-bold text-gray-800 text-sm">
+                6. Questions & Developer Support
+              </h3>
+              <p>
+                If you require clarification on these developer obligations, sandbox registration procedures, or terms of delivery, please coordinate with our admin team directly via email: <a href="mailto:myselfmkapps@gmail.com" className="font-semibold text-[#01875f] hover:underline">myselfmkapps@gmail.com</a>.
               </p>
             </section>
           </div>
